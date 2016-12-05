@@ -39,35 +39,26 @@ struct
   let spread v =
     make v v v
 
-  let add lhs rhs =
-    { x = lhs.x +. rhs.x;
-      y = lhs.y +. rhs.y;
-      z = lhs.z +. rhs.z; }
+  let emap op lhs rhs =
+    { x = op lhs.x rhs.x;
+      y = op lhs.y rhs.y;
+      z = op lhs.z rhs.z; }
 
-  let sub lhs rhs =
-    { x = lhs.x -. rhs.x;
-      y = lhs.y -. rhs.y;
-      z = lhs.z -. rhs.z; }
-
-  let mul lhs rhs =
-    { x = lhs.x *. rhs.x;
-      y = lhs.y *. rhs.y;
-      z = lhs.z *. rhs.z; }
-
-  let div lhs rhs =
-    { x = lhs.x /. rhs.x;
-      y = lhs.y /. rhs.y;
-      z = lhs.z /. rhs.z; }
+  let add = emap ( +. )
+  let sub = emap ( -. )
+  let mul = emap ( *. )
+  let div = emap ( /. )
 
   let smul s vec =
     { x = s *. vec.x;
       y = s *. vec.y;
       z = s *. vec.z; }
 
+  let eadd vec =
+    vec.x +. vec.y +. vec.z
+
   let dot lhs rhs =
-       lhs.x *. rhs.x
-    +. lhs.y *. rhs.y
-    +. lhs.z *. rhs.z
+    eadd (mul lhs rhs)
 
   let cross lhs rhs =
     { x = lhs.y *. rhs.z -. lhs.z *. rhs.y;
@@ -84,9 +75,7 @@ struct
 
   let norm vec =
     let r = 1. /. abs vec in
-    { x = r *. vec.x;
-      y = r *. vec.y;
-      z = r *. vec.z; }
+    smul r vec
 
   let project a b =
     smul (dot a b /. dot b b) b
